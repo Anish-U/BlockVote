@@ -78,15 +78,21 @@ initDB();
 // Web3 Connection
 const web3 = new Web3(GANACHE_URI);
 let election;
+let adminAddress;
 
 // Smart contract instance
 const initContract = async () => {
   const networkId = await web3.eth.net.getId();
   const deployedNetwork = Election.networks[networkId];
 
+  // Smart contract instance
   election = new web3.eth.Contract(Election.abi, deployedNetwork.address);
   global.election = election;
-  // console.log(election);
+
+  // Admin account address
+  const addresses = await web3.eth.getAccounts();
+  adminAddress = addresses[0];
+  global.adminAddress = adminAddress;
 };
 
 initContract();

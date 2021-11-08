@@ -16,8 +16,9 @@ const {
   forwardAuthentication,
 } = require("../middlewares/authAdmin");
 
-// Importing admin model
+// Importing admin & candidate model
 const Admin = require("../models/admin");
+const Candidate = require("../models/candidate");
 
 /*
 	HANDLING ROUTES
@@ -79,7 +80,14 @@ router.get("/dashboard", ensureAuthentication, (req, res) => {
 });
 
 // GET /admin/candidates
-router.get("/candidates", ensureAuthentication, (req, res) => {
+router.get("/candidates", ensureAuthentication, async (req, res) => {
+  const noOfCandidates = await election.methods.candidateCount().call();
+  console.log(noOfCandidates);
+
+  for (let index = 1; index <= noOfCandidates; index++) {
+    const candidate = await election.methods.getCandidate(index).call();
+    console.log(candidate);
+  }
   res.render("admin/candidates", {
     title: "Candidates",
     admin: req.body.admin,
@@ -95,9 +103,14 @@ router.get("/addCandidate", ensureAuthentication, (req, res) => {
 });
 
 // POST /admin/addCandidate
-router.post("/addCandidate", ensureAuthentication, (req, res) => {
+router.post("/addCandidate", ensureAuthentication, async (req, res) => {
+  // Destructing variables
   const { candidateName, partyName, partySlogan } = req.body;
+
+  // Validating form inputs
   const errors = validateCandidate(candidateName, partyName, partySlogan);
+
+  // If form inputs are not valid
   if (errors.length > 0) {
     res.render("admin/addCandidate", {
       title: "Add Candidate",
@@ -107,7 +120,74 @@ router.post("/addCandidate", ensureAuthentication, (req, res) => {
       partySlogan,
       admin: req.body.admin,
     });
+    return;
   } else {
+    let candidateId;
+
+    // Check if candidate is already present
+    const checkCandidate = await Candidate.findOne({
+      candidateName,
+      partyName,
+    });
+
+    // If candidate is not present or is unique
+    if (!checkCandidate) {
+      try {
+        // Transaction for adding candidate
+        await election.methods
+          .addCandidate(candidateName, partyName)
+          .send({ from: adminAddress, gas: 3000000 });
+
+        // Finding candidateId using smart contract function call
+        candidateId = await election.methods.candidateCount().call();
+      } catch (err) {
+        console.log(err);
+        res.render("admin/addCandidate", {
+          title: "Add Candidate",
+          error: "Error occurred. Please try again later...",
+          candidateName,
+          partyName,
+          partySlogan,
+          admin: req.body.admin,
+        });
+        return;
+      }
+
+      // Creating candidate object
+      const candidate = new Candidate({
+        candidateId,
+        candidateName,
+        partyName,
+      });
+      try {
+        // Saving to database
+        candidate.save();
+      } catch (error) {
+        res.render("admin/addCandidate", {
+          title: "Add Candidate",
+          error: "Error occurred. Please try again later...",
+          candidateName,
+          partyName,
+          partySlogan,
+          admin: req.body.admin,
+        });
+        return;
+      }
+
+      req.flash("success_msg", "Candidate added successfully");
+      res.redirect("/admin/addCandidate");
+    } else {
+      // If candidate is already present
+      res.render("admin/addCandidate", {
+        title: "Add Candidate",
+        error: "Candidate already present",
+        candidateName,
+        partyName,
+        partySlogan,
+        admin: req.body.admin,
+      });
+      return;
+    }
   }
 });
 
