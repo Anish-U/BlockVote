@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const flash = require("connect-flash");
 const session = require("express-session");
 const cookie = require("cookie-parser");
+const Web3 = require("web3");
 
 // Importing built-in modules
 const path = require("path");
@@ -13,13 +14,17 @@ const path = require("path");
 const voterRouter = require("./routers/voterRouter");
 const adminRouter = require("./routers/adminRouter");
 
-// Importing database Config
+// Importing database config
 const { initDB } = require("./config/database");
+
+// Importing smart contract
+const Election = require("./build/contracts/Election.json");
 
 // Fetching environment variables
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || "This_is_my_secret_key";
+const GANACHE_URI = process.env.GANACHE_URI || "http://localhost:7545";
 
 // Express app instance
 const app = express();
@@ -69,6 +74,22 @@ app.use((req, res, next) => {
 
 // MongoDB Connection
 initDB();
+
+// Web3 Connection
+const web3 = new Web3(GANACHE_URI);
+let election;
+
+// Smart contract instance
+const initContract = async () => {
+  const networkId = await web3.eth.net.getId();
+  const deployedNetwork = Election.networks[networkId];
+
+  election = new web3.eth.Contract(Election.abi, deployedNetwork.address);
+  global.election = election;
+  // console.log(election);
+};
+
+initContract();
 
 /*
 	HANDLING ROUTES

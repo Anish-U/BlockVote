@@ -15,7 +15,7 @@ contract Election {
     mapping(address => bool) hasVoted;
     mapping(uint256 => Candidate) candidates;
 
-    constructor() {
+    constructor() public {
         admin = msg.sender;
         candidateCount = 0;
         addCandidate("NOTA", "NOTA");
