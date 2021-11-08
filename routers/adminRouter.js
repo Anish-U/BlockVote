@@ -8,6 +8,7 @@ const router = express.Router();
 
 // Importing validation function
 const validateForm = require("../utils/validateAdminLogin");
+const validateCandidate = require("../utils/validateCandidate");
 
 // Importing middlewares
 const {
@@ -32,7 +33,7 @@ router.get("/login", forwardAuthentication, (req, res) => {
   res.render("admin/login", { title: "Login" });
 });
 
-// POST /voter/login
+// POST /admin/login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const errors = validateForm(username, password);
@@ -91,6 +92,23 @@ router.get("/addCandidate", ensureAuthentication, (req, res) => {
     title: "Add Candidate",
     admin: req.body.admin,
   });
+});
+
+// POST /admin/addCandidate
+router.post("/addCandidate", ensureAuthentication, (req, res) => {
+  const { candidateName, partyName, partySlogan } = req.body;
+  const errors = validateCandidate(candidateName, partyName, partySlogan);
+  if (errors.length > 0) {
+    res.render("admin/addCandidate", {
+      title: "Add Candidate",
+      errors,
+      candidateName,
+      partyName,
+      partySlogan,
+      admin: req.body.admin,
+    });
+  } else {
+  }
 });
 
 // GET /admin/results

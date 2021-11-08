@@ -17,15 +17,18 @@
 
 				</div>
 				<div class="card-body">
-					<form method="POST">
-						<div class="form-group mb-4">
-							<label class="font-weight-bold text-dark">Phone Number</label>
-							<input type="tel" class="form-control form-control-user" name="phoneNumber"
-								placeholder="Enter Phone Number" required autocomplete="off" value="">
-						</div>
-						<br>
-						<input type="submit" class="btn btn-info btn-block" value="Add Phone number">
-					</form>
+					<!-- Error messages if any -->
+					<%- include('includes/_messages') %>
+						<form method="POST">
+							<div class="form-group mb-4">
+								<label class="font-weight-bold text-dark">Phone Number</label>
+								<input type="tel" class="form-control form-control-user" name="phoneNumber"
+									placeholder="Enter Phone Number" required autocomplete="off"
+									value="<%= typeof phoneNumber != 'undefined' ? phoneNumber : '' %>">
+							</div>
+							<br>
+							<input type="submit" class="btn btn-info btn-block" value="Add Phone number">
+						</form>
 				</div>
 			</div>
 		</div>

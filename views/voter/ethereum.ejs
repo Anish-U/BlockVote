@@ -17,15 +17,18 @@
 
 				</div>
 				<div class="card-body">
-					<form method="POST">
-						<div class="form-group mb-4">
-							<label class="font-weight-bold text-dark">Ethereum account</label>
-							<input type="tel" class="form-control form-control-user" name="ethereumAccount"
-								placeholder="Enter Ethereum Account" required autocomplete="off" value="">
-						</div>
-						<br>
-						<input type="submit" class="btn btn-info btn-block" value="Add Account">
-					</form>
+					<!-- Error messages if any -->
+					<%- include('includes/_messages') %>
+						<form method="POST">
+							<div class="form-group mb-4">
+								<label class="font-weight-bold text-dark">Ethereum account</label>
+								<input type="tel" class="form-control form-control-user" name="ethereumAccount"
+									placeholder="Enter Ethereum Account" required autocomplete="off"
+									value="<%= typeof ethereumAccount != 'undefined' ? ethereumAccount : '' %>">
+							</div>
+							<br>
+							<input type="submit" class="btn btn-info btn-block" value="Add Account">
+						</form>
 				</div>
 			</div>
 		</div>

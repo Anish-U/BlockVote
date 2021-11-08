@@ -8,6 +8,8 @@ const router = express.Router();
 
 // Importing validation function
 const validateForm = require("../utils/validateVoterLogin");
+const validatePhone = require("../utils/validatePhone");
+const validateEthereum = require("../utils/validateEthereum");
 
 // Importing middlewares
 const {
@@ -82,12 +84,42 @@ router.get("/register-phone", ensureAuthentication, (req, res) => {
   res.render("voter/phone", { title: "Register Phone", voter: req.body.voter });
 });
 
+//POST /voter/register-phone
+router.post("/register-phone", ensureAuthentication, (req, res) => {
+  const { phoneNumber } = req.body;
+  const errors = validatePhone(phoneNumber);
+  if (errors.length > 0) {
+    res.render("voter/phone", {
+      title: "Add Candidate",
+      errors,
+      phoneNumber,
+      voter: req.body.voter,
+    });
+  } else {
+  }
+});
+
 // GET /voter/register-ethereum
 router.get("/register-ethereum", ensureAuthentication, (req, res) => {
   res.render("voter/ethereum", {
     title: "Register Ethereum",
     voter: req.body.voter,
   });
+});
+
+//POST /voter/register-ethereum
+router.post("/register-ethereum", ensureAuthentication, (req, res) => {
+  const { ethereumAccount } = req.body;
+  const errors = validateEthereum(ethereumAccount);
+  if (errors.length > 0) {
+    res.render("voter/ethereum", {
+      title: "Add Candidate",
+      errors,
+      ethereumAccount,
+      voter: req.body.voter,
+    });
+  } else {
+  }
 });
 
 // GET /voter/vote
