@@ -82,14 +82,41 @@ router.get("/dashboard", ensureAuthentication, (req, res) => {
 // GET /admin/candidates
 router.get("/candidates", ensureAuthentication, async (req, res) => {
   const noOfCandidates = await election.methods.candidateCount().call();
-  console.log(noOfCandidates);
 
-  for (let index = 1; index <= noOfCandidates; index++) {
-    const candidate = await election.methods.getCandidate(index).call();
-    console.log(candidate);
+  let candidateIds = [];
+  let candidateNames = [];
+  let partyNames = [];
+  let partySlogans = [];
+
+  for (let i = 1; i <= noOfCandidates; i++) {
+    const candidate = await election.methods.getCandidate(i).call();
+
+    if (candidate._candidateName == "NOTA") {
+      continue;
+    }
+
+    candidateIds.push(i);
+    candidateNames.push(candidate._candidateName);
+    partyNames.push(candidate._partyName);
+
+    const dbCandidate = await Candidate.findOne({
+      candidateId: i,
+    });
+
+    if (!dbCandidate) {
+      res.render("500.ejs", { admin: req.body.admin });
+      return;
+    }
+    partySlogans.push(dbCandidate.partySlogan);
   }
+
   res.render("admin/candidates", {
     title: "Candidates",
+    noOfCandidates,
+    candidateIds,
+    candidateNames,
+    partyNames,
+    partySlogans,
     admin: req.body.admin,
   });
 });
@@ -158,6 +185,7 @@ router.post("/addCandidate", ensureAuthentication, async (req, res) => {
         candidateId,
         candidateName,
         partyName,
+        partySlogan,
       });
       try {
         // Saving to database

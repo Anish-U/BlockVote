@@ -16,6 +16,14 @@ const candidateSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  partySlogan: {
+    type: String,
+    required: true,
+  },
+  // partyImage: {
+  // type: String,
+  // required: true,
+  // },
 });
 
 const Candidate = mongoose.model("Candidate", candidateSchema);
