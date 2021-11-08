@@ -51,18 +51,19 @@
 			<!-- Heading -->
 			<div class="sidebar-heading">Voting Process</div>
 
+			<!-- Nav Item - View Candidate -->
+			<li class="nav-item <% if(title == 'Candidates') { %> active <% }%>">
+				<a class="nav-link" href="/admin/candidates">
+					<i class="fas fa-users"></i>
+					<span>View Candidates</span></a>
+			</li>
+
 			<!-- Nav Item - Add Candidate -->
 			<li class="nav-item <% if(title == 'Add Candidate') { %> active <% }%>">
 				<a class="nav-link" href="/admin/addCandidate">
-					<i class="fas fa-phone-alt"></i>
+					<i class="fas fa-plus"></i>
 					<span>Add Candidate</span></a>
 			</li>
-
-			<!-- Divider -->
-			<hr class="sidebar-divider" />
-
-			<!-- Heading -->
-			<div class="sidebar-heading">Voting</div>
 
 			<!-- Nav Item - Results -->
 			<li class="nav-item <% if(title == 'Results') { %> active <% }%>">

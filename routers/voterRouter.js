@@ -77,6 +77,19 @@ router.get("/dashboard", ensureAuthentication, (req, res) => {
   res.render("voter/dashboard", { title: "Dashboard", voter: req.body.voter });
 });
 
+// GET /voter/register-phone
+router.get("/register-phone", ensureAuthentication, (req, res) => {
+  res.render("voter/phone", { title: "Register Phone", voter: req.body.voter });
+});
+
+// GET /voter/register-ethereum
+router.get("/register-ethereum", ensureAuthentication, (req, res) => {
+  res.render("voter/ethereum", {
+    title: "Register Ethereum",
+    voter: req.body.voter,
+  });
+});
+
 // GET /voter/vote
 router.get("/vote", ensureAuthentication, (req, res) => {
   res.render("voter/vote", { title: "Vote", voter: req.body.voter });

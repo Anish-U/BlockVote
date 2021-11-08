@@ -77,6 +77,14 @@ router.get("/dashboard", ensureAuthentication, (req, res) => {
   res.render("admin/dashboard", { title: "Dashboard", admin: req.body.admin });
 });
 
+// GET /admin/candidates
+router.get("/candidates", ensureAuthentication, (req, res) => {
+  res.render("admin/candidates", {
+    title: "Candidates",
+    admin: req.body.admin,
+  });
+});
+
 // GET /admin/addCandidate
 router.get("/addCandidate", ensureAuthentication, (req, res) => {
   res.render("admin/addCandidate", {
