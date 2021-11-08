@@ -1,98 +1,46 @@
 <%- include('includes/_navbar') %>
 	<!-- Content Row -->
 	<div class="row">
-		<div class="col-xl-4 col-lg-4">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Party Name
-					</h6>
-				</div>
-				<div class="card-body">
-					<div class="text-center">
-						<img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 15rem" src="/images/profile.svg" alt="..." />
-					</div>
-					<div class="text-center font-weight-bold mb-3">
-						<p>Candidate Name</p>
-					</div>
-					<p class="text-success">
-						Apki baar modi sarkar ! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam, voluptatibus.
-					</p>
-					<div class="text-center mt-3 mb-4">
-						<a href="/voter/vote/id" class="btn btn-block btn-info">VOTE</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-xl-4 col-lg-4">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Party Name
-					</h6>
-				</div>
-				<div class="card-body">
-					<div class="text-center">
-						<img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 15rem" src="/images/profile.svg" alt="..." />
-					</div>
-					<div class="text-center font-weight-bold mb-3">
-						<p>Candidate Name</p>
-					</div>
-					<p class="text-success">
-						Apki baar modi sarkar ! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam, voluptatibus.
-					</p>
-					<div class="text-center mt-3 mb-4">
-						<a href="/voter/vote/id" class="btn btn-block btn-info">VOTE</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-xl-4 col-lg-4">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Party Name
-					</h6>
-				</div>
-				<div class="card-body">
-					<div class="text-center">
-						<img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 15rem" src="/images/profile.svg" alt="..." />
-					</div>
-					<div class="text-center font-weight-bold mb-3">
-						<p>Candidate Name</p>
-					</div>
-					<p class="text-success">
-						Apki baar modi sarkar ! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam, voluptatibus.
-					</p>
-					<div class="text-center mt-3 mb-4">
-						<a href="/voter/vote/id" class="btn btn-block btn-info">VOTE</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-xl-4 col-lg-4">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Party Name
-					</h6>
-				</div>
-				<div class="card-body">
-					<div class="text-center">
-						<img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 15rem" src="/images/profile.svg" alt="..." />
-					</div>
-					<div class="text-center font-weight-bold mb-3">
-						<p>Candidate Name</p>
-					</div>
-					<p class="text-success">
-						Apki baar modi sarkar ! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam, voluptatibus.
-					</p>
-					<div class="text-center mt-3 mb-4">
-						<a href="/voter/vote/id" class="btn btn-block btn-info">VOTE</a>
-					</div>
-				</div>
-			</div>
-		</div>
+		<% if ( typeof noOfCandidates !='undefined' && 
+						typeof candidateIds !='undefined' && 
+						typeof candidateNames !='undefined' && 
+						typeof partyNames !='undefined' &&
+						typeof partySlogans !='undefined'
+					) { 
+							for (let i = 0; i < candidateNames.length; i++) {
+								const candidateId = candidateIds[i];				
+								const candidateName = candidateNames[i];
+								const partyName = partyNames[i];
+								const partySlogan = partySlogans[i];
+								%>
+								<div class="col-xl-4 col-lg-4">
+									<div class="card shadow mb-4">
+										<div class="card-header py-3">
+											<h6 class="m-0 font-weight-bold text-primary text-center">
+												<%= partyName %>
+											</h6>
+										</div>
+										<div class="card-body">
+											<div class="text-center">
+												<img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem" src="/images/profile.svg"
+													alt="..." />
+											</div>
+											<div class="text-center font-weight-bold mb-3">
+												<p><%= candidateName %></p>
+											</div>
+											<p class="text-success font-weight-bold text-center">
+												<%= partySlogan %>
+											</p>
+											<div class="text-center mt-3 mb-4">
+												<a href="/voter/vote/<%= candidateId %>" class="btn btn-block btn-info">VOTE</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<%
+							}
+						} %>
+				
 	</div>
 
 	<%- include('includes/_footer') %>

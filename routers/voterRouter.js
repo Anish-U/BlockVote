@@ -2,6 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const bn = require("bn.js");
 
 // Router
 const router = express.Router();
@@ -10,6 +11,7 @@ const router = express.Router();
 const validateForm = require("../utils/validateVoterLogin");
 const validatePhone = require("../utils/validatePhone");
 const validateEthereum = require("../utils/validateEthereum");
+const validateCandidateId = require("../utils/validateCandidateId");
 
 // Importing middlewares
 const {
@@ -19,6 +21,7 @@ const {
 
 // Importing voter model
 const Voter = require("../models/voter");
+const Candidate = require("../models/candidate");
 
 /*
 	HANDLING ROUTES
@@ -197,8 +200,92 @@ router.post("/register-ethereum", ensureAuthentication, async (req, res) => {
 });
 
 // GET /voter/vote
-router.get("/vote", ensureAuthentication, (req, res) => {
-  res.render("voter/vote", { title: "Vote", voter: req.body.voter });
+router.get("/vote", ensureAuthentication, async (req, res) => {
+  const noOfCandidates = await election.methods.candidateCount().call();
+
+  let candidateIds = [];
+  let candidateNames = [];
+  let partyNames = [];
+  let partySlogans = [];
+
+  for (let i = 1; i <= noOfCandidates; i++) {
+    const candidate = await election.methods.getCandidate(i).call();
+
+    candidateIds.push(i);
+    candidateNames.push(candidate._candidateName);
+    partyNames.push(candidate._partyName);
+
+    if (candidate._candidateName == "NOTA") {
+      partySlogans.push("NOTA");
+      continue;
+    }
+
+    const dbCandidate = await Candidate.findOne({
+      candidateId: i,
+    });
+
+    if (!dbCandidate) {
+      res.render("500.ejs", { voter: req.body.voter });
+      return;
+    }
+    partySlogans.push(dbCandidate.partySlogan);
+  }
+  res.render("voter/vote", {
+    title: "Vote",
+    noOfCandidates,
+    candidateIds,
+    candidateNames,
+    partyNames,
+    partySlogans,
+    voter: req.body.voter,
+  });
+});
+
+// GET /voter/vote/id
+router.get("/vote/:id", ensureAuthentication, async (req, res) => {
+  let candidateId = req.params.id;
+  const noOfCandidates = await election.methods.candidateCount().call();
+  const addresses = await web3.eth.getAccounts();
+
+  if (!validateCandidateId(candidateId, noOfCandidates)) {
+    res.status(404).render("voter/404");
+    return;
+  }
+  candidateId = parseInt(candidateId);
+
+  let voter = await Voter.findOne({ aadhaar: req.body.voter.aadhaar });
+
+  if (!voter) {
+    res.status(404).render("voter/404");
+    return;
+  }
+
+  if (!voter.phone) {
+    req.flash("error_msg", "Please register your phone number !");
+    res.redirect("/voter/register-phone");
+    return;
+  }
+
+  if (!voter.ethAcc || !addresses.includes(voter.ethAcc)) {
+    req.flash("error_msg", "Please register your ethereum account !");
+    res.redirect("/voter/register-ethereum");
+    return;
+  }
+
+  const voterAddress = voter.ethAcc;
+  var id = new bn(candidateId);
+
+  try {
+    await election.methods
+      .vote({ _candidateId: id })
+      .send({ from: voterAddress, gas: 3000000 });
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+    return;
+  }
+
+  res.send("Voting done");
 });
 
 // GET /voter/results
