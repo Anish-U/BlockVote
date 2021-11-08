@@ -18,16 +18,24 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<td>Candidate1</td>
-										<td>Party1</td>
-										<td>21</td>
-									</tr>
-									<tr>
-										<td>Candidate2</td>
-										<td>Party2</td>
-										<td>10</td>
-									</tr>
+									<% if ( typeof noOfCandidates !='undefined' && 
+											typeof candidateNames !='undefined' && 
+											typeof partyNames !='undefined' &&
+											typeof voteCounts !='undefined'
+										) { 
+												for (let i = 0; i < candidateNames.length; i++) {
+													const candidateName = candidateNames[i];
+													const partyName = partyNames[i];
+													const voteCount = voteCounts[i];
+													%>
+													<tr>
+														<td><%= candidateName %></td>
+														<td><%= partyName %></td>
+														<td><%= voteCount %></td>
+													</tr>
+											<% }
+											}
+											%>
 								</tbody>
 							</table>
 						</div>
@@ -36,20 +44,17 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row mb-5">
 		<div class="col-xl-8 col-lg-8">
 			<div class="card shadow mb-4">
-				<!-- Card Header - Dropdown -->
 				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Bar Chart
-					</h6>
+					<h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
 				</div>
-				<!-- Card Body -->
 				<div class="card-body">
-					<div class="chart-bar pt-4">
+					<div class="chart-bar">
 						<canvas id="barChart"></canvas>
 					</div>
+					<hr />
 				</div>
 			</div>
 		</div>
@@ -72,3 +77,85 @@
 	</div>
 
 	<%- include('includes/_footer') %>
+
+<script>
+	function getRandomColor() {
+		var letters = '0123456789ABCDEF';
+		var color = '#';
+		for (var i = 0; i < 6; i++) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
+	}
+	
+	let colors = [];
+	for(let i = 0; i < <%= noOfCandidates %>; i++) {
+		colors.push(getRandomColor());
+	}
+
+	var ctx = document.getElementById("pieChart");
+	var myPieChart = new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: <%- JSON.stringify(candidateNames) %>,
+			datasets: [{
+				data: <%- JSON.stringify(voteCounts) %>,
+				backgroundColor: colors,
+				}],
+		},
+		options: {
+			tooltips: {
+				backgroundColor: "rgb(255,255,255)",
+				bodyFontColor: "#858796",
+				borderColor: '#dddfeb',
+				borderWidth: 1,
+				xPadding: 15,
+				yPadding: 15,
+				displayColors: false,
+				caretPadding: 10,
+			},
+		},
+	});
+
+	
+	var ctx = document.getElementById("barChart");
+	var myBarChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: <%- JSON.stringify(candidateNames) %>,
+			datasets: [{
+				data: <%- JSON.stringify(voteCounts) %>,
+				backgroundColor: colors,
+				}],
+		},
+		options: {
+			legend: {
+				display: false,
+			},
+			scales: {
+				yAxes:[{
+					gridLines: {
+						display: false,
+					},
+					beginAtZero: true,
+					ticks: {
+						min: 0,
+						stepSize: 10,
+						max: 50
+					}
+				}],
+			},
+			tooltips: {
+				backgroundColor: "rgb(255,255,255)",
+				bodyFontColor: "#858796",
+				borderColor: '#dddfeb',
+				borderWidth: 1,
+				xPadding: 15,
+				yPadding: 15,
+				displayColors: false,
+				caretPadding: 10,
+			}
+		}
+	});
+
+</script>

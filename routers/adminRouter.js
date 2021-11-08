@@ -220,8 +220,28 @@ router.post("/addCandidate", ensureAuthentication, async (req, res) => {
 });
 
 // GET /admin/results
-router.get("/results", ensureAuthentication, (req, res) => {
-  res.render("admin/results", { title: "Results", admin: req.body.admin });
+router.get("/results", ensureAuthentication, async (req, res) => {
+  const noOfCandidates = await election.methods.candidateCount().call();
+
+  let candidateNames = [];
+  let partyNames = [];
+  let voteCounts = [];
+
+  for (let i = 1; i <= noOfCandidates; i++) {
+    const candidate = await election.methods.getCandidate(i).call();
+    candidateNames.push(candidate._candidateName);
+    partyNames.push(candidate._partyName);
+    voteCounts.push(candidate._voteCount);
+  }
+
+  res.render("admin/results", {
+    title: "Results",
+    noOfCandidates,
+    candidateNames,
+    partyNames,
+    voteCounts,
+    admin: req.body.admin,
+  });
 });
 
 // GET /admin/logout
