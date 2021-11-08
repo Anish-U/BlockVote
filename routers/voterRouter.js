@@ -85,7 +85,7 @@ router.get("/register-phone", ensureAuthentication, (req, res) => {
 });
 
 //POST /voter/register-phone
-router.post("/register-phone", ensureAuthentication, (req, res) => {
+router.post("/register-phone", ensureAuthentication, async (req, res) => {
   const { phoneNumber } = req.body;
   const errors = validatePhone(phoneNumber);
   if (errors.length > 0) {
@@ -96,6 +96,31 @@ router.post("/register-phone", ensureAuthentication, (req, res) => {
       voter: req.body.voter,
     });
   } else {
+    const aadhaar = req.body.voter.aadhaar;
+    let newVoter;
+
+    try {
+      newVoter = await Voter.findOneAndUpdate(
+        { aadhaar: aadhaar },
+        { phone: phoneNumber },
+        { new: true }
+      );
+    } catch (err) {
+      console.log(err);
+      res.render("voter/phone", {
+        title: "Add Candidate",
+        error: "Error occurred. Please try again later",
+        phoneNumber,
+        voter: req.body.voter,
+      });
+      return;
+    }
+    req.body.voter = newVoter;
+    req.flash(
+      "success_msg",
+      "You have successfully registered your mobile number"
+    );
+    res.redirect("/voter/register-phone");
   }
 });
 
@@ -108,7 +133,7 @@ router.get("/register-ethereum", ensureAuthentication, (req, res) => {
 });
 
 //POST /voter/register-ethereum
-router.post("/register-ethereum", ensureAuthentication, (req, res) => {
+router.post("/register-ethereum", ensureAuthentication, async (req, res) => {
   const { ethereumAccount } = req.body;
   const errors = validateEthereum(ethereumAccount);
   if (errors.length > 0) {
@@ -119,6 +144,55 @@ router.post("/register-ethereum", ensureAuthentication, (req, res) => {
       voter: req.body.voter,
     });
   } else {
+    const aadhaar = req.body.voter.aadhaar;
+    const addresses = await web3.eth.getAccounts();
+
+    if (
+      !addresses.includes(ethereumAccount) ||
+      ethereumAccount == adminAddress
+    ) {
+      res.render("voter/ethereum", {
+        title: "Add Candidate",
+        error: "Invalid Ethereum account",
+        ethereumAccount,
+        voter: req.body.voter,
+      });
+      return;
+    }
+
+    let newVoter;
+
+    try {
+      newVoter = await Voter.findOneAndUpdate(
+        { aadhaar: aadhaar },
+        { ethAcc: ethereumAccount },
+        { new: true }
+      );
+    } catch (err) {
+      console.log(err);
+      if (err.code == 11000) {
+        res.render("voter/ethereum", {
+          title: "Add Candidate",
+          error: "Invalid Ethereum account",
+          ethereumAccount,
+          voter: req.body.voter,
+        });
+        return;
+      }
+      res.render("voter/ethereum", {
+        title: "Add Candidate",
+        error: "Error occurred. Please try again later",
+        ethereumAccount,
+        voter: req.body.voter,
+      });
+      return;
+    }
+    req.body.voter = newVoter;
+    req.flash(
+      "success_msg",
+      "You have successfully registered your ethereum account"
+    );
+    res.redirect("/voter/register-ethereum");
   }
 });
 
@@ -128,8 +202,28 @@ router.get("/vote", ensureAuthentication, (req, res) => {
 });
 
 // GET /voter/results
-router.get("/results", ensureAuthentication, (req, res) => {
-  res.render("voter/results", { title: "Results", voter: req.body.voter });
+router.get("/results", ensureAuthentication, async (req, res) => {
+  const noOfCandidates = await election.methods.candidateCount().call();
+
+  let candidateNames = [];
+  let partyNames = [];
+  let voteCounts = [];
+
+  for (let i = 1; i <= noOfCandidates; i++) {
+    const candidate = await election.methods.getCandidate(i).call();
+    candidateNames.push(candidate._candidateName);
+    partyNames.push(candidate._partyName);
+    voteCounts.push(candidate._voteCount);
+  }
+
+  res.render("voter/results", {
+    title: "Results",
+    noOfCandidates,
+    candidateNames,
+    partyNames,
+    voteCounts,
+    voter: req.body.voter,
+  });
 });
 
 // GET /voter/logout

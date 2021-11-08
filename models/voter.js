@@ -26,6 +26,7 @@ const VoterSchema = new mongoose.Schema({
   },
   ethAcc: {
     type: String,
+    unique: true,
   },
 });
 

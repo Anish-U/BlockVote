@@ -95,6 +95,8 @@ const initContract = async () => {
   global.adminAddress = adminAddress;
 };
 
+global.web3 = web3;
+
 initContract();
 
 /*
