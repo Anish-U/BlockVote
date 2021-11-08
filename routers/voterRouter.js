@@ -209,8 +209,8 @@ router.get("/vote", ensureAuthentication, async (req, res) => {
   let partySlogans = [];
 
   for (let i = 1; i <= noOfCandidates; i++) {
-    const candidate = await election.methods.getCandidate(i).call();
-
+    const candidate = await election.methods.getCandidate(i.toString()).call();
+    console.log(candidate);
     candidateIds.push(i);
     candidateNames.push(candidate._candidateName);
     partyNames.push(candidate._partyName);
@@ -251,7 +251,8 @@ router.get("/vote/:id", ensureAuthentication, async (req, res) => {
     res.status(404).render("voter/404");
     return;
   }
-  candidateId = parseInt(candidateId);
+
+  // candidateId = parseInt(candidateId);
 
   let voter = await Voter.findOne({ aadhaar: req.body.voter.aadhaar });
 
@@ -273,11 +274,10 @@ router.get("/vote/:id", ensureAuthentication, async (req, res) => {
   }
 
   const voterAddress = voter.ethAcc;
-  var id = new bn(candidateId);
 
   try {
     await election.methods
-      .vote({ _candidateId: id })
+      .vote({ _candidateId: candidateId })
       .send({ from: voterAddress, gas: 3000000 });
   } catch (error) {
     console.log(error);
@@ -297,7 +297,7 @@ router.get("/results", ensureAuthentication, async (req, res) => {
   let voteCounts = [];
 
   for (let i = 1; i <= noOfCandidates; i++) {
-    const candidate = await election.methods.getCandidate(i).call();
+    const candidate = await election.methods.getCandidate(i.toString()).call();
     candidateNames.push(candidate._candidateName);
     partyNames.push(candidate._partyName);
     voteCounts.push(candidate._voteCount);

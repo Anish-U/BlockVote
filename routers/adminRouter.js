@@ -89,8 +89,7 @@ router.get("/candidates", ensureAuthentication, async (req, res) => {
   let partySlogans = [];
 
   for (let i = 1; i <= noOfCandidates; i++) {
-    const candidate = await election.methods.getCandidate(i).call();
-
+    const candidate = await election.methods.getCandidate(i.toString()).call();
     if (candidate._candidateName == "NOTA") {
       continue;
     }
@@ -100,7 +99,7 @@ router.get("/candidates", ensureAuthentication, async (req, res) => {
     partyNames.push(candidate._partyName);
 
     const dbCandidate = await Candidate.findOne({
-      candidateId: i,
+      candidateId: i.toString(),
     });
 
     if (!dbCandidate) {
@@ -228,7 +227,7 @@ router.get("/results", ensureAuthentication, async (req, res) => {
   let voteCounts = [];
 
   for (let i = 1; i <= noOfCandidates; i++) {
-    const candidate = await election.methods.getCandidate(i).call();
+    const candidate = await election.methods.getCandidate(i.toString()).call();
     candidateNames.push(candidate._candidateName);
     partyNames.push(candidate._partyName);
     voteCounts.push(candidate._voteCount);

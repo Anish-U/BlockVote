@@ -2,7 +2,7 @@ pragma solidity >=0.4.2;
 
 contract Election {
     struct Candidate {
-        uint256 candidateId;
+        string candidateId;
         string candidateName;
         string partyName;
         uint256 voteCount;
@@ -13,7 +13,7 @@ contract Election {
     uint256 public candidateCount;
 
     mapping(address => bool) hasVoted;
-    mapping(uint256 => Candidate) candidates;
+    mapping(string => Candidate) candidates;
 
     constructor() public {
         admin = msg.sender;
@@ -22,18 +22,34 @@ contract Election {
         hasVoted[admin] = true;
     }
 
+    function uint2str(uint256 _i) internal pure returns (string memory str) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 length;
+        while (j != 0) {
+            length++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(length);
+        uint256 k = length;
+        j = _i;
+        while (j != 0) {
+            bstr[--k] = bytes1(uint8(48 + (j % 10)));
+            j /= 10;
+        }
+        str = string(bstr);
+    }
+
     function addCandidate(string memory _name, string memory _party) public {
         require(msg.sender == admin, "Only admin has this privilege!!");
         candidateCount++;
-        candidates[candidateCount] = Candidate(
-            candidateCount,
-            _name,
-            _party,
-            0
-        );
+        string memory candidateId = uint2str(candidateCount);
+        candidates[candidateId] = Candidate(candidateId, _name, _party, 0);
     }
 
-    function getCandidate(uint256 _candidateId)
+    function getCandidate(string memory _candidateId)
         public
         view
         returns (
@@ -42,24 +58,16 @@ contract Election {
             uint256 _voteCount
         )
     {
-        require(
-            _candidateId > 0 && _candidateId <= candidateCount,
-            "Invalid candidate"
-        );
         _candidateName = candidates[_candidateId].candidateName;
         _partyName = candidates[_candidateId].partyName;
         _voteCount = candidates[_candidateId].voteCount;
     }
 
-    function vote(uint256 _candidateId) public {
+    function vote(string memory _candidateId) public {
         require(msg.sender != admin, "Admin doesnt have the right to vote");
         require(!hasVoted[msg.sender], "User have voted before!!");
-        require(
-            _candidateId > 0 && _candidateId <= candidateCount,
-            "Invalid candidate"
-        );
         hasVoted[msg.sender] = true;
-        candidates[_candidateId].voteCount++;
+        candidates[_candidateId].voteCount += 1;
     }
 
     function doneVoting() public view returns (bool _voted) {
