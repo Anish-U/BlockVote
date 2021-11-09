@@ -10,6 +10,8 @@ contract Election {
 
     address admin;
 
+    uint256 public electionStage;
+
     uint256 public candidateCount;
 
     mapping(address => bool) hasVoted;
@@ -17,6 +19,7 @@ contract Election {
 
     constructor() public {
         admin = msg.sender;
+        electionStage = 0;
         candidateCount = 0;
         addCandidate("NOTA", "NOTA");
         hasVoted[admin] = true;
@@ -72,5 +75,14 @@ contract Election {
 
     function doneVoting() public view returns (bool _voted) {
         _voted = hasVoted[msg.sender];
+    }
+
+    function changeElectionStage() public {
+        require(msg.sender == admin, "Only admin has this privilege!!");
+        require(
+            electionStage >= 0 && electionStage < 2,
+            "Invalid election stage"
+        );
+        electionStage++;
     }
 }
