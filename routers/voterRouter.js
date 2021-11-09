@@ -277,7 +277,7 @@ router.get("/vote/:id", ensureAuthentication, async (req, res) => {
 
   try {
     await election.methods
-      .vote({ _candidateId: candidateId })
+      .vote(candidateId)
       .send({ from: voterAddress, gas: 3000000 });
   } catch (error) {
     console.log(error);
