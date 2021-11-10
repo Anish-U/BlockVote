@@ -1,79 +1,91 @@
 <%- include('includes/_navbar') %>
 	<!-- Content Row -->
 	<div class="row">
-		<div class="w-100 p-2">
-			<div class="card shadow mb-2">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Results Table
-					</h6>
-					<div class="card-body">
-						<div class="table-responsive">
-							<table class="table table-bordered" width="100%" cellspacing="0">
-								<thead>
-									<tr>
-										<th>Candidate Name</th>
-										<th>Party Name</th>
-										<th>No of Votes</th>
-									</tr>
-								</thead>
-								<tbody>
-									<% if ( typeof noOfCandidates !='undefined' && 
-											typeof candidateNames !='undefined' && 
-											typeof partyNames !='undefined' &&
-											typeof voteCounts !='undefined'
-										) { 
-												for (let i = 0; i < candidateNames.length; i++) {
-													const candidateName = candidateNames[i];
-													const partyName = partyNames[i];
-													const voteCount = voteCounts[i];
-													%>
-													<tr>
-														<td><%= candidateName %></td>
-														<td><%= partyName %></td>
-														<td><%= voteCount %></td>
-													</tr>
-											<% }
-											}
-											%>
-								</tbody>
-							</table>
+		<% if (typeof electionStage != 'undefined' && electionStage < 2) { %>
+			<div class="col-xl-10 offset-1 col-lg-10 mb-4">
+				<div class="card shadow">
+					<div class="card-body text-center py-5">
+						<i class="fas fa-times-circle text-danger fa-4x"></i>
+						<h3 class="font-weight-bold mt-5">
+							Not in Results Phase
+						</h3>
+					</div>
+				</div>
+		<% } else { %>
+			<div class="w-100 p-2">
+				<div class="card shadow mb-4">
+					<div class="card-header py-3">
+						<h6 class="m-0 font-weight-bold text-primary">
+							Results Table
+						</h6>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-bordered" width="100%" cellspacing="0">
+									<thead>
+										<tr>
+											<th>Candidate Name</th>
+											<th>Party Name</th>
+											<th>No of Votes</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% if ( typeof noOfCandidates !='undefined' && 
+												typeof candidateNames !='undefined' && 
+												typeof partyNames !='undefined' &&
+												typeof voteCounts !='undefined'
+											) { 
+													for (let i = 0; i < candidateNames.length; i++) {
+														const candidateName = candidateNames[i];
+														const partyName = partyNames[i];
+														const voteCount = voteCounts[i];
+														%>
+														<tr>
+															<td><%= candidateName %></td>
+															<td><%= partyName %></td>
+															<td><%= voteCount %></td>
+														</tr>
+												<% }
+												}
+												%>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-5">
-		<div class="col-xl-8 col-lg-8">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
-				</div>
-				<div class="card-body">
-					<div class="chart-bar">
-						<canvas id="barChart"></canvas>
+		<div class="row mb-5">
+			<div class="col-xl-8 col-lg-8">
+				<div class="card shadow mb-4">
+					<div class="card-header py-3">
+						<h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
 					</div>
-					<hr />
-				</div>
-			</div>
-		</div>
-		<div class="col-xl-4 col-lg-4">
-			<div class="card shadow mb-4">
-				<!-- Card Header - Dropdown -->
-				<div class="card-header py-3">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Pie Chart
-					</h6>
-				</div>
-				<!-- Card Body -->
-				<div class="card-body">
-					<div class="chart-pie pt-4">
-						<canvas id="pieChart"></canvas>
+					<div class="card-body">
+						<div class="chart-bar">
+							<canvas id="barChart"></canvas>
+						</div>
+						<hr />
 					</div>
 				</div>
 			</div>
-		</div>
+			<div class="col-xl-4 col-lg-4">
+				<div class="card shadow mb-4">
+					<!-- Card Header - Dropdown -->
+					<div class="card-header py-3">
+						<h6 class="m-0 font-weight-bold text-primary">
+							Pie Chart
+						</h6>
+					</div>
+					<!-- Card Body -->
+					<div class="card-body">
+						<div class="chart-pie pt-4">
+							<canvas id="pieChart"></canvas>
+						</div>
+					</div>
+				</div>
+				<% } %>
+			</div>
 	</div>
 
 	<%- include('includes/_footer') %>

@@ -1,6 +1,17 @@
 <%- include('includes/_navbar') %>
 	<!-- Content Row -->
 	<div class="row">
+		<% if (typeof electionStage != 'undefined' && electionStage < 2) { %>
+			<div class="col-xl-10 offset-1 col-lg-10">
+				<div class="card shadow">
+					<div class="card-body text-center py-5">
+						<i class="fas fa-times-circle text-danger fa-4x"></i>
+						<h3 class="font-weight-bold mt-5">
+							Not in Results Phase
+						</h3>
+					</div>
+				</div>
+		<% } else { %>
 		<div class="w-100 p-2">
 			<div class="card shadow mb-2">
 				<div class="card-header py-3">
@@ -73,6 +84,7 @@
 					</div>
 				</div>
 			</div>
+			<% } %>
 		</div>
 	</div>
 

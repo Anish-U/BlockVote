@@ -66,15 +66,15 @@ contract Election {
         _voteCount = candidates[_candidateId].voteCount;
     }
 
-    function vote(string memory _candidateId) public {
+    function vote(string memory _candidateId, address _sender) public {
         require(msg.sender != admin, "Admin doesnt have the right to vote");
         require(!hasVoted[msg.sender], "User have voted before!!");
         candidates[_candidateId].voteCount++;
-        hasVoted[msg.sender] = true;
+        hasVoted[_sender] = true;
     }
 
-    function doneVoting() public view returns (bool _voted) {
-        _voted = hasVoted[msg.sender];
+    function doneVoting(address _sender) public view returns (bool voted) {
+        voted = hasVoted[_sender];
     }
 
     function changeElectionStage() public {

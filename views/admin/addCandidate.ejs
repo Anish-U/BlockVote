@@ -1,54 +1,66 @@
 <%- include('includes/_navbar') %>
 	<!-- Content Row -->
 	<div class="row">
-		<div class="col-xl-10 offset-1 col-lg-10">
-			<div class="card shadow">
-				<div class="
-                      card-header
-                      py-3
-                      d-flex
-                      flex-row
-                      align-items-center
-                      justify-content-between
-                    ">
-					<h6 class="m-0 font-weight-bold text-primary">
-						Fill the form to add candidate
-					</h6>
-
+		<% if (typeof electionStage != 'undefined' && electionStage != 0) { %>
+			<div class="col-xl-10 offset-1 col-lg-10">
+				<div class="card shadow">
+					<div class="card-body text-center py-5">
+						<i class="fas fa-times-circle text-danger fa-4x"></i>
+						<h3 class="font-weight-bold mt-5">
+							Not in Candidate Registration Phase
+						</h3>
+					</div>
 				</div>
-				<div class="card-body">
-					<!-- Error messages if any -->
-					<%- include('includes/_messages') %>
-						<form method="POST">
-							<div class="form-group mb-4">
-								<label class="font-weight-bold text-dark">Candidate Name</label>
-								<input type="text" class="form-control form-control-user" name="candidateName"
-									placeholder="Enter Candidate Name" required autocomplete="off"
-									value="<%= typeof candidateName != 'undefined' ? candidateName : '' %>">
-							</div>
-							<div class="form-group mb-4">
-								<label class="font-weight-bold text-dark">Party Name</label>
-								<input type="text" class="form-control form-control-user" name="partyName"
-									placeholder="Enter Party Name" required autocomplete="off"
-									value="<%= typeof partyName != 'undefined' ? partyName : '' %>">
-							</div>
-							<div class="form-group mb-4">
-								<label class="font-weight-bold text-dark">Party Slogan</label>
-								<input type="text" class="form-control form-control-user" name="partySlogan"
-									placeholder="Enter Party Slogan" required autocomplete="off"
-									value="<%= typeof partySlogan != 'undefined' ? partySlogan : '' %>">
-							</div>
-							<!-- <div class="form-group">
-								<label class="font-weight-bold text-dark">Party Logo</label>
-								<input type="file" class="form-control form-control-user" name="partyImage" accept="image/*" required
-									autocomplete="off">
-							</div> -->
-							<br>
-							<input type="submit" class="btn btn-info btn-block" value="Add Candidate">
-						</form>
+		<% } else { %>		  
+			<div class="col-xl-10 offset-1 col-lg-10">
+				<div class="card shadow">
+					<div class="
+												card-header
+												py-3
+												d-flex
+												flex-row
+												align-items-center
+												justify-content-between
+											">
+						<h6 class="m-0 font-weight-bold text-primary">
+							Fill the form to add candidate
+						</h6>
+
+					</div>
+					<div class="card-body">
+						<!-- Error messages if any -->
+						<%- include('includes/_messages') %>
+							<form method="POST">
+								<div class="form-group mb-4">
+									<label class="font-weight-bold text-dark">Candidate Name</label>
+									<input type="text" class="form-control form-control-user" name="candidateName"
+										placeholder="Enter Candidate Name" required autocomplete="off"
+										value="<%= typeof candidateName != 'undefined' ? candidateName : '' %>">
+								</div>
+								<div class="form-group mb-4">
+									<label class="font-weight-bold text-dark">Party Name</label>
+									<input type="text" class="form-control form-control-user" name="partyName"
+										placeholder="Enter Party Name" required autocomplete="off"
+										value="<%= typeof partyName != 'undefined' ? partyName : '' %>">
+								</div>
+								<div class="form-group mb-4">
+									<label class="font-weight-bold text-dark">Party Slogan</label>
+									<input type="text" class="form-control form-control-user" name="partySlogan"
+										placeholder="Enter Party Slogan" required autocomplete="off"
+										value="<%= typeof partySlogan != 'undefined' ? partySlogan : '' %>">
+								</div>
+								<!-- <div class="form-group">
+									<label class="font-weight-bold text-dark">Party Logo</label>
+									<input type="file" class="form-control form-control-user" name="partyImage" accept="image/*" required
+										autocomplete="off">
+								</div> -->
+								<br>
+								<input type="submit" class="btn btn-info btn-block" value="Add Candidate">
+							</form>
+					</div>
 				</div>
 			</div>
-		</div>
+		<% } %>
 	</div>
 
 	<%- include('includes/_footer') %>

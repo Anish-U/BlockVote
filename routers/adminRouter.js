@@ -19,6 +19,7 @@ const {
 // Importing admin & candidate model
 const Admin = require("../models/admin");
 const Candidate = require("../models/candidate");
+const Voter = require("../models/voter");
 
 /*
 	HANDLING ROUTES
@@ -75,8 +76,21 @@ router.post("/login", async (req, res) => {
 });
 
 // GET /admin/dashboard
-router.get("/dashboard", ensureAuthentication, (req, res) => {
-  res.render("admin/dashboard", { title: "Dashboard", admin: req.body.admin });
+router.get("/dashboard", ensureAuthentication, async (req, res) => {
+  const noOfCandidates = await election.methods.candidateCount().call();
+
+  let result = await Voter.find();
+  const noOfVoters = result.length;
+
+  const electionStage = await election.methods.electionStage().call();
+
+  res.render("admin/dashboard", {
+    title: "Dashboard",
+    noOfCandidates,
+    noOfVoters,
+    electionStage,
+    admin: req.body.admin,
+  });
 });
 
 // GET /admin/candidates
@@ -121,10 +135,13 @@ router.get("/candidates", ensureAuthentication, async (req, res) => {
 });
 
 // GET /admin/addCandidate
-router.get("/addCandidate", ensureAuthentication, (req, res) => {
+router.get("/addCandidate", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
   res.render("admin/addCandidate", {
     title: "Add Candidate",
     admin: req.body.admin,
+    electionStage,
   });
 });
 
@@ -133,6 +150,13 @@ router.post("/addCandidate", ensureAuthentication, async (req, res) => {
   // Destructing variables
   const { candidateName, partyName, partySlogan } = req.body;
 
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 0) {
+    req.flash("error_msg", "You are not in the candidate registration phase");
+    res.redirect("/admin/dashboard");
+    return;
+  }
   // Validating form inputs
   const errors = validateCandidate(candidateName, partyName, partySlogan);
 
@@ -218,9 +242,33 @@ router.post("/addCandidate", ensureAuthentication, async (req, res) => {
   }
 });
 
+// GET /admin/changeState
+router.get("/changeState", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+  if (electionStage == 2) {
+    req.flash("error_msg", "Invalid election stage change");
+    res.redirect("/admin/dashboard");
+    return;
+  }
+
+  try {
+    await election.methods
+      .changeElectionStage()
+      .send({ from: adminAddress, gas: 3000000 });
+  } catch (err) {
+    console.log(err);
+    req.flash("error_msg", "Invalid election stage change");
+    res.redirect("/admin/dashboard");
+  }
+
+  req.flash("success_msg", "Election stage has been updated successfully");
+  res.redirect("/admin/dashboard");
+});
+
 // GET /admin/results
 router.get("/results", ensureAuthentication, async (req, res) => {
   const noOfCandidates = await election.methods.candidateCount().call();
+  const electionStage = await election.methods.electionStage().call();
 
   let candidateNames = [];
   let partyNames = [];
@@ -239,6 +287,7 @@ router.get("/results", ensureAuthentication, async (req, res) => {
     candidateNames,
     partyNames,
     voteCounts,
+    electionStage,
     admin: req.body.admin,
   });
 });

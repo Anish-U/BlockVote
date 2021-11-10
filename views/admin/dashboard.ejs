@@ -1,7 +1,135 @@
 <%- include('includes/_navbar') %>
 	<!-- Content Row -->
-	<div class="row">
+	<%- include('includes/_messages') %>
 
+	<div class="row">
+		<div class="col">
+			<div class="card shadow py-2 mb-4">
+				<div class="card-body">
+					<div class="row mb-3">
+						<div class="col-4 text-center">
+							<% if (typeof electionStage != 'undefined' && electionStage > 0) { %>
+								<div class="d-flex flex-column text-success">						
+									<div class="pb-2">
+										<i class="fas fa-2x fa-check-circle"></i>
+									</div>				 
+							<% } else if(typeof electionStage != 'undefined' && electionStage == 0) { %>
+								<div class="d-flex flex-column text-warning">			
+									<div class="pb-2">
+										<i class="fas fa-2x fa-dot-circle"></i>
+									</div>							 
+							<% }else { %>
+								<div class="d-flex flex-column">
+									<div class="pb-2">
+										<i class="fas fa-2x fa-minus"></i>
+									</div>										 
+							<% } %>
+								<div class="font-weight-bold">
+									Candidate Registration Phase
+								</div>
+							</div>
+						</div>
+						<div class="col-4 text-center">
+							<% if (typeof electionStage != 'undefined' && electionStage > 1) { %>
+								<div class="d-flex flex-column text-success">						
+									<div class="pb-2">
+										<i class="fas fa-2x fa-check-circle"></i>
+									</div>				 
+							<% } else if(typeof electionStage != 'undefined' && electionStage == 1) { %>
+								<div class="d-flex flex-column text-warning">			
+									<div class="pb-2">
+										<i class="fas fa-2x fa-dot-circle"></i>
+									</div>							 
+							<% }else { %>
+								<div class="d-flex flex-column">
+									<div class="pb-2">
+										<i class="fas fa-2x fa-minus"></i>
+									</div>										 
+							<% } %>
+								<div class="font-weight-bold">
+									Voting Phase
+								</div>
+							</div>
+						</div>
+						<div class="col-4 text-center">
+							<% if (typeof electionStage != 'undefined' && electionStage > 2) { %>
+								<div class="d-flex flex-column text-success">						
+									<div class="pb-2">
+										<i class="fas fa-2x fa-check-circle"></i>
+									</div>				 
+							<% } else if(typeof electionStage != 'undefined' && electionStage == 2) { %>
+								<div class="d-flex flex-column text-warning">			
+									<div class="pb-2">
+										<i class="fas fa-2x fa-dot-circle"></i>
+									</div>							 
+							<% }else { %>
+								<div class="d-flex flex-column">
+									<div class="pb-2">
+										<i class="fas fa-2x fa-minus"></i>
+									</div>										 
+							<% } %>
+								<div class="font-weight-bold">
+									Result Phase
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col text-center py-2">
+							<a href="/admin/changeState" class="btn btn-info <%= electionStage == 2 ? 'disabled' : '' %> " >Next Stage</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xl-6 col-md-6 mb-4">
+					<div class="card border-left-primary shadow h-100 py-2">
+						<div class="card-body">
+							<div class="row no-gutters align-items-center">
+								<div class="col mr-2">
+									<div class="
+											text-xs
+											font-weight-bold
+											text-primary text-uppercase
+											mb-1">
+										Candidates
+									</div>
+									<div class="h5 mb-0 font-weight-bold text-gray-800">
+										<%= typeof noOfCandidates != 'undefined' ? (noOfCandidates - 1) : '' %> 
+									</div>
+								</div>
+								<div class="col-auto">
+									<i class="fas fa-user-tie fa-2x text-gray-500"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-6 col-md-6 mb-4">
+					<div class="card border-left-primary shadow h-100 py-2">
+						<div class="card-body">
+							<div class="row no-gutters align-items-center">
+								<div class="col mr-2">
+									<div class="
+											text-xs
+											font-weight-bold
+											text-primary text-uppercase
+											mb-1">
+										Voters
+									</div>
+									<div class="h5 mb-0 font-weight-bold text-gray-800">
+										<%= typeof noOfVoters != 'undefined' ? noOfVoters : '' %> 
+									</div>
+								</div>
+								<div class="col-auto">
+									<i class="fas fa-users fa-2x text-gray-500"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<%- include('includes/_footer') %>

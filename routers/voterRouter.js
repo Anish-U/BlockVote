@@ -78,19 +78,58 @@ router.post("/login", async (req, res) => {
 });
 
 // GET /voter/dashboard
-router.get("/dashboard", ensureAuthentication, (req, res) => {
-  res.render("voter/dashboard", { title: "Dashboard", voter: req.body.voter });
+router.get("/dashboard", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+  const phone = req.body.voter.phone;
+  const ethAcc = req.body.voter.ethAcc;
+
+  res.render("voter/dashboard", {
+    title: "Dashboard",
+    electionStage,
+    phone,
+    ethAcc,
+    voter: req.body.voter,
+  });
 });
 
 // GET /voter/register-phone
-router.get("/register-phone", ensureAuthentication, (req, res) => {
-  res.render("voter/phone", { title: "Register Phone", voter: req.body.voter });
+router.get("/register-phone", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 0) {
+    req.flash("error_msg", "Not in Registration Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  res.render("voter/phone", {
+    title: "Register Phone",
+    phone: req.body.voter.phone,
+    voter: req.body.voter,
+  });
 });
 
 //POST /voter/register-phone
 router.post("/register-phone", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 0) {
+    req.flash("error_msg", "Not in Registration Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   const { phoneNumber } = req.body;
   const errors = validatePhone(phoneNumber);
+
+  const phone = req.body.voter.phone;
+
+  if (phone != null) {
+    req.flash("error_msg", "Phone already registered");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   if (errors.length > 0) {
     res.render("voter/phone", {
       title: "Add Candidate",
@@ -128,17 +167,43 @@ router.post("/register-phone", ensureAuthentication, async (req, res) => {
 });
 
 // GET /voter/register-ethereum
-router.get("/register-ethereum", ensureAuthentication, (req, res) => {
+router.get("/register-ethereum", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 0) {
+    req.flash("error_msg", "Not in Registration Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   res.render("voter/ethereum", {
     title: "Register Ethereum",
+    ethAcc: req.body.voter.ethAcc,
     voter: req.body.voter,
   });
 });
 
 //POST /voter/register-ethereum
 router.post("/register-ethereum", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 0) {
+    req.flash("error_msg", "Not in Registration Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   const { ethereumAccount } = req.body;
   const errors = validateEthereum(ethereumAccount);
+
+  const ethAcc = req.body.voter.ethAcc;
+
+  if (ethAcc != null) {
+    req.flash("error_msg", "Ethereum Account already registered");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   if (errors.length > 0) {
     res.render("voter/ethereum", {
       title: "Add Candidate",
@@ -201,6 +266,35 @@ router.post("/register-ethereum", ensureAuthentication, async (req, res) => {
 
 // GET /voter/vote
 router.get("/vote", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 1) {
+    req.flash("error_msg", "Not in Voting Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  if (req.body.voter.ethAcc == null || req.body.voter.phone == null) {
+    req.flash(
+      "error_msg",
+      "You dont have the right to vote. Since you missed registration phase"
+    );
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  const ethAcc = req.body.voter.ethAcc;
+  const addresses = await web3.eth.getAccounts();
+
+  if (!addresses.includes(ethAcc) || ethAcc == adminAddress) {
+    req.flash("error_msg", "You dont have the right to vote.");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  const hasVoted = await election.methods.doneVoting(ethAcc).call();
+  console.log(hasVoted);
+
   const noOfCandidates = await election.methods.candidateCount().call();
 
   let candidateIds = [];
@@ -237,60 +331,76 @@ router.get("/vote", ensureAuthentication, async (req, res) => {
     candidateNames,
     partyNames,
     partySlogans,
+    hasVoted,
     voter: req.body.voter,
   });
 });
 
 // GET /voter/vote/id
 router.get("/vote/:id", ensureAuthentication, async (req, res) => {
+  const electionStage = await election.methods.electionStage().call();
+
+  if (electionStage != 1) {
+    req.flash("error_msg", "Not in Voting Phase");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  if (req.body.voter.ethAcc == null || req.body.voter.phone == null) {
+    req.flash(
+      "error_msg",
+      "You dont have the right to vote. Since you missed registration phase"
+    );
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  const ethAcc = req.body.voter.ethAcc;
+  const addresses = await web3.eth.getAccounts();
+
+  if (!addresses.includes(ethAcc) || ethAcc == adminAddress) {
+    req.flash("error_msg", "You dont have the right to vote.");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
+  const hasVoted = await election.methods.doneVoting(ethAcc).call();
+  console.log(hasVoted);
+
+  if (hasVoted) {
+    req.flash("error_msg", "Your vote has been saved already");
+    res.redirect("/voter/dashboard");
+    return;
+  }
+
   let candidateId = req.params.id;
   const noOfCandidates = await election.methods.candidateCount().call();
-  const addresses = await web3.eth.getAccounts();
 
   if (!validateCandidateId(candidateId, noOfCandidates)) {
     res.status(404).render("voter/404");
     return;
   }
 
-  // candidateId = parseInt(candidateId);
-
-  let voter = await Voter.findOne({ aadhaar: req.body.voter.aadhaar });
-
-  if (!voter) {
-    res.status(404).render("voter/404");
-    return;
-  }
-
-  if (!voter.phone) {
-    req.flash("error_msg", "Please register your phone number !");
-    res.redirect("/voter/register-phone");
-    return;
-  }
-
-  if (!voter.ethAcc || !addresses.includes(voter.ethAcc)) {
-    req.flash("error_msg", "Please register your ethereum account !");
-    res.redirect("/voter/register-ethereum");
-    return;
-  }
-
-  const voterAddress = voter.ethAcc;
-
   try {
     await election.methods
-      .vote(candidateId)
-      .send({ from: voterAddress, gas: 3000000 });
+      .vote(candidateId, ethAcc)
+      .send({ from: ethAcc, gas: 3000000 });
   } catch (error) {
     console.log(error);
-    res.send(error);
+    req.flash("error_msg", "Error occurred. Please try again later !!");
+    res.redirect("/voter/dashboard");
     return;
   }
 
-  res.send("Voting done");
+  req.flash("success_msg", "Your vote has been saved successfully");
+  res.redirect("/voter/dashboard");
+  return;
 });
 
 // GET /voter/results
 router.get("/results", ensureAuthentication, async (req, res) => {
   const noOfCandidates = await election.methods.candidateCount().call();
+  const electionStage = await election.methods.electionStage().call();
 
   let candidateNames = [];
   let partyNames = [];
@@ -309,6 +419,7 @@ router.get("/results", ensureAuthentication, async (req, res) => {
     candidateNames,
     partyNames,
     voteCounts,
+    electionStage,
     voter: req.body.voter,
   });
 });
