@@ -10,7 +10,7 @@ const Web3 = require("web3");
 const path = require("path");
 
 // Importing routers
-// const homeRouter = require("./routers/homeRouter");
+const homeRouter = require("./routers/homeRouter");
 const voterRouter = require("./routers/voterRouter");
 const adminRouter = require("./routers/adminRouter");
 
@@ -104,7 +104,7 @@ initContract();
 */
 
 // Home routes
-// app.use("/", homeRouter);
+app.use("/", homeRouter);
 
 // Voter routes
 app.use("/voter", voterRouter);
