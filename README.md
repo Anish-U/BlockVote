@@ -141,70 +141,70 @@ When the command runs successfully. Go to localhost:3000 there you will land on 
 
 #### Home Page
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/home_page.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/home_page.png?raw=true" width="700">
 </center>
 
 #### Admin: Login Page
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_login.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_login.png?raw=true" width="700">
 </center>
 
 #### Admin: Dashboard
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_dashboard.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_dashboard.png?raw=true" width="700">
 </center>
 
 #### Admin: Add Candidate
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_add_candidate.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_add_candidate.png?raw=true" width="700">
 </center>
 
 #### Admin: View Candidates
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_view_candidates.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_view_candidates.png?raw=true" width="700">
 </center>
 
 #### Admin: Add Candidate Error
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_add_candidate_error.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_add_candidate_error.png?raw=true" width="700">
 </center>
 
 #### Voter: Login Page
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_login.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_login.png?raw=true" width="700">
 </center>
 
 #### Voter: Dashboard
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_dashboard.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_dashboard.png?raw=true" width="700">
 </center>
 
 #### Voter: Phone Number Registration
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_register_phone.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_register_phone.png?raw=true" width="700">
 </center>
 
 #### Voter: Ethereum Account Registration
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_register_ethereum_account.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_register_ethereum_account.png?raw=true" width="700">
 </center>
 
 #### Voter: Voting
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_vote.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_vote.png?raw=true" width="700">
 </center>
 
 #### Voter: Voting Error Page
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_vote_error.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/voter_vote_error.png?raw=true" width="700">
 </center>
 
 #### View Results
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_results.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_results.png?raw=true" width="700">
 </center>
 
 #### Results Error
 <center>
-<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_results_error.png?raw=true" width="500">
+<img src="https://github.com/Anish-U/BlockVote/blob/master/public/screenshots/admin_results_error.png?raw=true" width="700">
 </center>
